@@ -32,7 +32,17 @@ if (window.gsap && window.ScrollTrigger) {
   // y la animación va sincronizada con el dedo.
   // (isTouch === 1 = solo táctil; las compus con pantalla táctil no entran)
   if (ScrollTrigger.isTouch === 1) {
-    ScrollTrigger.normalizeScroll(true);
+    ScrollTrigger.normalizeScroll({
+      // momentum = el "impulso" que sigue moviendo la página después de soltar el dedo.
+      // DENTRO de la animación del celular lo quitamos (0): si no, una deslizada
+      // corta se saltaba piezas (probado: de "Vidrio" pasaba directo a "Placa").
+      // En el resto de la página, impulso normal.
+      momentum: (self) => {
+        const st = window.chuncheTL?.scrollTrigger;
+        const dentro = st && st.isActive && st.progress < 0.999;
+        return dentro ? 0 : Math.min(3, self.velocityY / 1000);
+      },
+    });
   }
   // No recalcular todo cada vez que la barra del celular cambia el alto
   ScrollTrigger.config({ ignoreMobileResize: true });
@@ -157,6 +167,7 @@ if (window.gsap && window.ScrollTrigger) {
         ? {
             snapTo: paradas,
             directional: true,
+            inertia: false, // decide con dónde quedó el dedo, sin calcular "a dónde iría con el impulso"
             duration: { min: 0.25, max: 0.7 }, // cuánto tarda en acomodarse
             delay: 0.05,                       // espera un poquito después de soltar
             ease: "power2.inOut",

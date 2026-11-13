@@ -44,12 +44,16 @@ async function iniciar() {
   const renderer = new THREE.WebGLRenderer({ antialias: !esCelular, alpha: true }); // alpha: fondo transparente (se ve el tapete de CSS)
   // Pixel ratio = cuántos puntos reales dibuja por cada punto de la página.
   // En celular 1.5 ya se ve nítido y dibuja casi la mitad de puntos que 2.
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, esCelular ? 1.5 : 2));
+  // "let" porque puede bajar solo si el aparato no logra ir fluido (ver parte 11).
+  let nitidez = Math.min(window.devicePixelRatio, esCelular ? 1.5 : 2);
+  renderer.setPixelRatio(nitidez);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping; // colores más "de cine"
   renderer.toneMappingExposure = 1.05;
   renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;   // sombras suaves
+  // Sombras: en compu las "suaves" (PCFSoft, más cálculos por punto);
+  // en celular las normales (PCF): casi igual de bonitas y mucho más baratas.
+  renderer.shadowMap.type = esCelular ? THREE.PCFShadowMap : THREE.PCFSoftShadowMap;
   renderer.domElement.className = "lienzo-3d";
   renderer.domElement.setAttribute("aria-hidden", "true");
 
@@ -290,8 +294,17 @@ async function iniciar() {
   /* ---------------------------------------------------------
      5. MATERIALES (cómo se ve cada superficie con la luz)
      --------------------------------------------------------- */
+  // Material "con barniz" (clearcoat): en compu el físico, que dibuja una capa
+  // de brillo extra encima; en celular el estándar, que cuesta mucho menos.
+  // (Al estándar le quitamos las opciones de barniz, porque no las entiende.)
+  function conBarniz(opciones) {
+    if (!esCelular) return new THREE.MeshPhysicalMaterial(opciones);
+    const { clearcoat, clearcoatRoughness, ...resto } = opciones;
+    return new THREE.MeshStandardMaterial(resto);
+  }
+
   const M = {
-    tapa: new THREE.MeshPhysicalMaterial({ color: 0x2b3638, metalness: 0.5, roughness: 0.3, clearcoat: 0.8, clearcoatRoughness: 0.15 }),
+    tapa: conBarniz({ color: 0x2b3638, metalness: 0.5, roughness: 0.3, clearcoat: 0.8, clearcoatRoughness: 0.15 }),
     marco: new THREE.MeshStandardMaterial({ color: 0x9aa6a8, metalness: 1, roughness: 0.22 }),
     oscuro: new THREE.MeshStandardMaterial({ color: 0x121718, metalness: 0.2, roughness: 0.5 }),
     placa: new THREE.MeshStandardMaterial({ color: 0x1f4a3e, roughness: 0.55 }),
@@ -302,10 +315,10 @@ async function iniciar() {
     etiqueta: new THREE.MeshStandardMaterial({ map: texEtiqueta, roughness: 0.6 }),
     pantalla: new THREE.MeshBasicMaterial({ map: texPantalla }),             // "Basic" = brilla sola, no le afecta la luz
     listo: new THREE.MeshBasicMaterial({ map: texListo, transparent: true, opacity: 0 }),
-    vidrio: new THREE.MeshPhysicalMaterial({ color: 0xffffff, metalness: 0, roughness: 0.03, transparent: true, opacity: 0.22, clearcoat: 1, depthWrite: false }),
+    vidrio: conBarniz({ color: 0xffffff, metalness: 0, roughness: 0.03, transparent: true, opacity: 0.22, clearcoat: 1, depthWrite: false }),
     grieta: new THREE.MeshBasicMaterial({ map: texGrieta, transparent: true, depthWrite: false }),
-    lente: new THREE.MeshPhysicalMaterial({ color: 0x0a0e12, metalness: 0.3, roughness: 0.05, clearcoat: 1 }),
-    ambar: new THREE.MeshPhysicalMaterial({ color: 0xf2b33d, roughness: 0.42, clearcoat: 0.3 }),
+    lente: conBarniz({ color: 0x0a0e12, metalness: 0.3, roughness: 0.05, clearcoat: 1 }),
+    ambar: conBarniz({ color: 0xf2b33d, roughness: 0.42, clearcoat: 0.3 }),
     goma: new THREE.MeshStandardMaterial({ color: 0xc9d2d3, roughness: 0.4 }),
     bandeja: new THREE.MeshStandardMaterial({ color: 0x173a3c, roughness: 0.7 }),
   };
@@ -495,7 +508,7 @@ async function iniciar() {
       ? Math.min(anchoV * 1.1, altoV * (0.44 + 0.18 * t))
       : Math.min(anchoV * 0.52, altoV * 1.0);
     const cx = celular ? anchoV / 2 : anchoV / 2 + Math.min(anchoV, 1160) * 0.26;
-    const cy = celular ? altoV * (0.81 - 0.1 * t) : altoV * 0.53;
+    const cy = celular ? altoV * (0.81 - 0.17 * t) : altoV * 0.53; // desarmado sube (antes quedaba un hueco grande)
 
     // Cuántas unidades se ven de alto con zoom 1, para calcular el zoom
     const visibles = 2 * VISTA.length() * Math.tan(THREE.MathUtils.degToRad(FOV / 2));
@@ -596,6 +609,80 @@ async function iniciar() {
      --------------------------------------------------------- */
   const objetivo = new THREE.Vector3();
 
+  // CALIDAD QUE SE ADAPTA SOLA
+  // Medimos cuánto tarda cada cuadro mientras la animación se mueve.
+  // Si en promedio pasa de 30 ms (menos de ~33 cuadros por segundo),
+  // el aparato no da abasto y probamos, en este orden:
+  //   1) apagar las sombras (casi no se nota)
+  //   2) bajar un poco la nitidez (mínimo 0.9: más abajo se ve pixeleado)
+  // Después de cada cambio COMPROBAMOS si sirvió. Si no mejoró al menos 15 %,
+  // lo lento era el procesador (no la tarjeta de video): devolvemos la calidad
+  // y dejamos de intentar. Así un celular potente nunca pierde calidad.
+  const NITIDEZ_MINIMA = 0.9;
+  let ultimoDibujo = 0;     // cuándo se dibujó el cuadro anterior
+  let sumaMs = 0;           // suma de lo que tardaron los últimos cuadros
+  let cuadrosMedidos = 0;
+  let adaptar = true;       // false = ya no tocamos más la calidad
+  let ultimoCambio = null;  // qué cambiamos la última vez, para comprobar si sirvió
+  let saltarUnaMedida = false; // justo después de un cambio, la medida sale "sucia"
+
+  function ponerSombras(prendidas) {
+    renderer.shadowMap.enabled = prendidas;
+    // Los materiales se tienen que "recompilar" con o sin sombras: needsUpdate
+    escena.traverse((obj) => {
+      if (obj.material) obj.material.needsUpdate = true;
+    });
+    piso.visible = prendidas; // el piso solo sirve para mostrar sombras
+    firmaAnterior = "";       // dibujar de nuevo
+  }
+
+  function ponerNitidez(valor) {
+    nitidez = valor;
+    renderer.setPixelRatio(nitidez);
+    medir(); // aplica el tamaño nuevo del dibujo
+  }
+
+  function revisarFluidez() {
+    if (!adaptar) return;
+    const ahora = performance.now();
+    const ms = ahora - ultimoDibujo;
+    ultimoDibujo = ahora;
+    if (ms > 250) return; // pausa larga = la persona dejó de bajar: no cuenta
+    sumaMs += ms;
+    cuadrosMedidos++;
+    if (cuadrosMedidos < 12) return; // decidimos cada 12 cuadros
+    const promedio = sumaMs / cuadrosMedidos;
+    sumaMs = 0;
+    cuadrosMedidos = 0;
+    if (saltarUnaMedida) { saltarUnaMedida = false; return; }
+
+    // ¿El cambio anterior sirvió?
+    if (ultimoCambio) {
+      const mejoro = promedio < ultimoCambio.promedioAntes * 0.85;
+      if (!mejoro) {
+        ultimoCambio.deshacer(); // no sirvió: devolvemos la calidad
+        adaptar = false;         // y no seguimos bajándola
+        return;
+      }
+      ultimoCambio = null;
+    }
+
+    if (promedio <= 30) return; // va fluido: no tocamos nada
+
+    if (renderer.shadowMap.enabled) {
+      ponerSombras(false);
+      ultimoCambio = { promedioAntes: promedio, deshacer: () => ponerSombras(true) };
+    } else if (nitidez > NITIDEZ_MINIMA) {
+      const antes = nitidez;
+      ponerNitidez(Math.max(NITIDEZ_MINIMA, nitidez * 0.8));
+      ultimoCambio = { promedioAntes: promedio, deshacer: () => ponerNitidez(antes) };
+    } else {
+      adaptar = false; // ya hicimos todo lo posible
+      return;
+    }
+    saltarUnaMedida = true;
+  }
+
   function dibujar() {
     // "lerp": acercarse poco a poco al valor deseado = movimiento suave
     inclinacion.rotation.y += (mouse.x * 0.28 - inclinacion.rotation.y) * 0.06;
@@ -619,6 +706,7 @@ async function iniciar() {
     camara.position.copy(objetivo).add(vistaActual);
     camara.lookAt(objetivo);
     renderer.render(escena, camara);
+    revisarFluidez();
   }
 
   new IntersectionObserver(([entrada]) => {
