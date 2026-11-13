@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chunche | Reparación de celulares en San Salvador</title>
+  <meta name="description" content="Reparamos celulares de todas las marcas el mismo día. Revisión gratis, precio antes de empezar y 90 días de garantía.">
+  <meta name="theme-color" content="#24686c">
+
+  <!-- SEGURIDAD (CSP): lista de lo que la página tiene permitido cargar.
+       'self' = solo archivos de nuestro propio sitio. Si alguien lograra
+       meter código ajeno en la página, el navegador lo bloquea.
+       La única excepción es el mapa de Google (frame-src), y solo carga si la persona lo pide. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; frame-src https://www.google.com; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+  <!-- Al hacer clic en un enlace externo, no le contamos al otro sitio desde qué página venía -->
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+
+  <!-- Ícono de la pestaña: el tornillo del logo -->
+  <link rel="icon" href="icono.svg" type="image/svg+xml">
+
+  <!-- VISTA PREVIA al compartir el link (WhatsApp, Facebook, X).
+       ✏️ Al publicar: poner en "og:image" la dirección completa,
+       ej. https://chunche.netlify.app/vista-previa.jpg (WhatsApp necesita la dirección completa),
+       y agregar aquí: <meta property="og:url" content="https://chunche.netlify.app/"> -->
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="es_SV">
+  <meta property="og:site_name" content="Chunche">
+  <meta property="og:title" content="Chunche | Reparación de celulares en San Salvador">
+  <meta property="og:description" content="Revisión gratis, precio antes de empezar y 90 días de garantía. Cotiza por WhatsApp.">
+  <meta property="og:image" content="vista-previa.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Celular sobre la mesa de trabajo del taller Chunche">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Precargar la letra: el navegador la pide de una vez, sin esperar a leer el CSS -->
+  <link rel="preload" href="fuentes/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="estilos.css">
+
+  <!-- FICHA PARA GOOGLE (datos estructurados): le dice a Google, en su idioma,
+       que esto es un negocio local, con su horario y teléfono.
+       No es código que se ejecute: son solo datos.
+       ✏️ Cambiar por los datos reales del cliente (mismo teléfono y dirección que la página). -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "Chunche",
+    "description": "Reparación de celulares de todas las marcas en San Salvador.",
+    "telephone": "+503 7000-0000",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Calle ejemplo #123, Colonia Médica",
+      "addressLocality": "San Salvador",
+      "addressCountry": "SV"
+    },
+    "openingHoursSpecification": [
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], "opens": "08:00", "closes": "18:00" },
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": "Saturday", "opens": "08:00", "closes": "14:00" }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <!-- Para quien navega con teclado o lector de pantalla: saltar directo al cotizador -->
+  <a class="saltar" href="#cotizar">Saltar al cotizador</a>
+
+  <!-- ============ HERO: la mesa de trabajo ============ -->
+  <section class="hero" id="inicio">
+    <header class="barra">
+      <a class="marca" href="#inicio" aria-label="Chunche, inicio">
+        <span class="marca__tornillo" aria-hidden="true"></span>chunche
+      </a>
+      <nav class="barra__nav" aria-label="Principal">
+        <a href="#cotizar">Cotizar</a>
+        <a href="#proceso">Cómo trabajamos</a>
+        <a href="#ubicacion">Dónde estamos</a>
+      </nav>
+    </header>
+
+    <div class="hero__grid">
+      <!-- Texto de bienvenida (se esconde cuando el celular se desarma) -->
+      <div class="hero__texto">
+        <h1>¿Pantalla quebrada? Hoy mismo queda como nueva.</h1>
+        <p>Reparamos celulares de todas las marcas en San Salvador. Revisión gratis, precio antes de empezar y 90 días de garantía.</p>
+        <div class="botones">
+          <a class="boton boton--cinta" href="#cotizar">Cotizar mi reparación</a>
+          <a class="boton boton--borde" href="https://wa.me/50370000000?text=Hola%2C%20quiero%20reparar%20mi%20celular" target="_blank" rel="noopener">Escribir por WhatsApp</a>
+        </div>
+        <p class="hero__pista" aria-hidden="true"><span class="hero__flecha"></span>Baja y mira qué hay adentro</p>
+      </div>
+
+      <!-- Fichas: una por pieza. Aparecen una a la vez mientras bajas -->
+      <div class="fichas-zona">
+        <!-- Barra de progreso: 5 piezas (solo visual) -->
+        <div class="progreso" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+        <ol class="fichas" aria-label="Qué reparamos">
+          <li class="ficha">
+            <h2>Vidrio quebrado</h2>
+            <p>Si la pantalla todavía da imagen, cambiamos solo el vidrio. Sale más barato.</p>
+            <p class="ficha__datos"><strong>listo en 1 hora</strong></p>
+          </li>
+          <li class="ficha">
+            <h2>Pantalla con rayas o en negro</h2>
+            <p>Pantalla completa, original o de calidad equivalente. Tú escoges.</p>
+            <p class="ficha__datos"><strong>listo en 1 a 2 horas</strong></p>
+          </li>
+          <li class="ficha">
+            <h2>No enciende o se mojó</h2>
+            <p>Limpiamos la placa, buscamos el corto y cambiamos solo el componente dañado.</p>
+            <p class="ficha__datos"><strong>listo en 24 a 48 horas</strong></p>
+          </li>
+          <li class="ficha">
+            <h2>Batería que no dura</h2>
+            <p>Batería nueva y sellada. Te devolvemos la vieja para que la veas.</p>
+            <p class="ficha__datos"><strong>listo en 45 minutos</strong></p>
+          </li>
+          <li class="ficha">
+            <h2>Tapa o cámara trasera rota</h2>
+            <p>Tapa nueva del mismo color y lente de cámara sin polvo adentro.</p>
+            <p class="ficha__datos"><strong>listo en 1 hora</strong></p>
+          </li>
+          <li class="ficha ficha--final">
+            <h2>Y lo volvemos a armar.</h2>
+            <p>Antes de entregártelo probamos todo contigo: pantalla, carga, cámaras y señal.</p>
+            <a class="boton boton--cinta" href="#cotizar">Cotizar mi reparación</a>
+          </li>
+        </ol>
+      </div>
+
+      <!-- La mesa en 3D: herramientas + celular de 5 capas -->
+      <div class="escena" aria-hidden="true">
+        <div class="telefono-caja">
+          <div class="plano">
+            <!-- Herramientas sobre el tapete -->
+            <span class="sombra"></span>
+            <span class="herramienta espatula"></span>
+            <span class="herramienta pinza"><i></i><i></i></span>
+            <span class="herramienta ventosa"></span>
+            <span class="herramienta tornillo t1"></span>
+            <span class="herramienta tornillo t2"></span>
+            <span class="herramienta tornillo t3"></span>
+
+            <!-- El celular: capas de abajo (tapa) hacia arriba (vidrio) -->
+            <div class="telefono">
+              <div class="capa capa--tapa"><span class="camaras"><i></i><i></i><i></i></span><span class="capa__borde"></span></div>
+              <div class="capa capa--bateria"><span class="bateria"><span class="cinta">3.85V 5000mAh</span></span><span class="capa__borde"></span></div>
+              <div class="capa capa--placa"><span class="chip chip--grande"></span><span class="chip chip--a"></span><span class="chip chip--b"></span><span class="chip chip--c"></span><span class="capa__borde"></span></div>
+              <div class="capa capa--pantalla"><span class="hora">10:24</span><span class="fecha">13 de noviembre</span><span class="capa__borde"></span></div>
+              <div class="capa capa--vidrio"><span class="grieta"></span><span class="capa__borde"></span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ COTIZADOR ============ -->
+  <section class="cotizar" id="cotizar">
+    <div class="contenedor cotizar__grid">
+      <form class="formulario" id="cotizador">
+        <h2>Cotiza tu reparación</h2>
+        <p class="formulario__intro">Dinos qué celular tienes y qué le pasa. Te respondemos por WhatsApp con el precio exacto de la pieza y si la tenemos disponible.</p>
+
+        <div class="campos-fila">
+          <label class="campo">
+            <span>Marca</span>
+            <select name="marca" id="marca">
+              <option>Samsung</option>
+              <option>iPhone</option>
+              <option>Xiaomi / Redmi</option>
+              <option>Motorola</option>
+              <option>Huawei / Honor</option>
+              <option>Otra</option>
+            </select>
+          </label>
+
+          <label class="campo">
+            <span>Modelo (si lo sabes)</span>
+            <!-- list="lista-modelos": muestra sugerencias mientras escribes -->
+            <input type="text" name="modelo" id="modelo" placeholder="Ej. Galaxy A54" autocomplete="off" list="lista-modelos" enterkeyhint="done">
+            <datalist id="lista-modelos"></datalist>
+          </label>
+        </div>
+
+        <fieldset class="opciones">
+          <legend>¿Qué le pasa?</legend>
+          <label><input type="radio" name="problema" value="pantalla" checked><span>Pantalla rota</span></label>
+          <label><input type="radio" name="problema" value="bateria"><span>Batería</span></label>
+          <label><input type="radio" name="problema" value="carga"><span>No carga</span></label>
+          <label><input type="radio" name="problema" value="agua"><span>Se mojó</span></label>
+          <label><input type="radio" name="problema" value="camara"><span>Cámara</span></label>
+          <label><input type="radio" name="problema" value="software"><span>Se traba o se reinicia</span></label>
+        </fieldset>
+      </form>
+
+      <!-- Resultado con forma de orden de trabajo del taller -->
+      <aside class="orden" aria-live="polite">
+        <span class="orden__cinta" aria-hidden="true"></span>
+        <p class="orden__titulo">Tu cotización</p>
+        <dl class="orden__lista">
+          <div><dt>Equipo</dt><dd id="r-equipo">Samsung</dd></div>
+          <div><dt>Reparación</dt><dd id="r-problema">Cambio de pantalla</dd></div>
+          <div><dt>Revisión</dt><dd>Gratis</dd></div>
+          <div><dt>Tiempo <small id="r-si-pieza">si tenemos la pieza</small></dt><dd id="r-tiempo">1 a 2 horas</dd></div>
+        </dl>
+        <!-- Solo mostramos el precio que el taller controla: su mano de obra.
+             El precio de la pieza cambia con el proveedor, por eso se confirma por WhatsApp. -->
+        <div class="orden__precio">
+          <span>Mano de obra</span>
+          <strong id="r-mano">$15</strong>
+        </div>
+        <p class="orden__pieza" id="r-pieza">+ la pieza: te confirmamos el precio y si la tenemos disponible, antes de reparar.</p>
+        <a class="boton boton--whatsapp" id="r-enviar" href="#" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><use href="#icono-wa"/></svg>
+          <span id="r-boton">Pedir precio de la pieza</span>
+        </a>
+        <p class="orden__nota">90 días de garantía en la pieza y en la mano de obra. <a href="garantia.html">Ver qué cubre</a></p>
+      </aside>
+
+      <!-- Qué pasa después de enviar (sí es una secuencia: va numerado).
+           Va DESPUÉS de la cotización: en celular así el precio queda
+           pegado a las opciones y la persona lo ve cambiar al elegir. -->
+      <div class="despues">
+        <h3>¿Qué pasa después?</h3>
+        <ol>
+          <li>Nos llega tu mensaje por WhatsApp con tu celular y el problema.</li>
+          <li>Te respondemos con el precio de la pieza y si la tenemos hoy.</li>
+          <li>Traes el celular, lo revisamos gratis y lo reparamos.</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PROCESO (sí es una secuencia, por eso va numerado) ============ -->
+  <section class="proceso" id="proceso">
+    <div class="contenedor">
+      <h2>Así trabajamos</h2>
+      <ol class="pasos">
+        <li><h3>Lo revisamos gratis</h3><p>En 15 minutos sabemos qué tiene. No pagas nada por la revisión.</p></li>
+        <li><h3>Te damos el precio</h3><p>Antes de abrirlo te decimos cuánto cuesta. Si no te convence, te lo llevas igual.</p></li>
+        <li><h3>Lo reparamos</h3><p>La mayoría de arreglos quedan el mismo día. Puedes esperar aquí o regresar.</p></li>
+        <li><h3>Lo pruebas con nosotros</h3><p>Revisamos todo juntos y te llevas 90 días de garantía por escrito.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============ OPINIONES: notas pegadas con cinta ============ -->
+  <section class="opiniones">
+    <div class="contenedor">
+      <h2>Lo que dicen los clientes</h2>
+      <div class="notas">
+        <figure class="nota">
+          <div class="estrellas" role="img" aria-label="5 de 5 estrellas"><svg><use href="#estrella"/></svg><svg><use href="#estrella"/></svg><svg><use href="#estrella"/></svg><svg><use href="#estrella"/></svg><svg><use href="#estrella"/></svg></div>
+          <blockquote>Me cambiaron la pantalla en una hora y quedó igualita. Me enseñaron la pieza vieja.</blockquote>
+          <figcaption>Andrea M., Soyapango</figcaption>
+        </figure>
+        <figure class="nota">
+          <div class="estrellas" role="img" aria-label="5 de 5 estrellas"><svg><use href="#estrella"/></svg><svg><use href="#estrella"/></svg><svg><use href="#estrella"/></svg><svg><use href="#estrella"/></svg><svg><use href="#estrella"/></svg></div>
+          <blockquote>Se me cayó al agua y pensé que ya no tenía remedio. A los dos días ya estaba funcionando.</blockquote>
+          <figcaption>José R., Mejicanos</figcaption>
+        </figure>
+        <figure class="nota">
+          <div class="estrellas" role="img" aria-label="5 de 5 estrellas"><svg><use href="#estrella"/></svg><svg><use href="#estrella"/></svg><svg><use href="#estrella"/></svg><svg><use href="#estrella"/></svg><svg><use href="#estrella"/></svg></div>
+          <blockquote>Me dijeron el precio antes de tocarlo y fue lo mismo que pagué. Así da gusto.</blockquote>
+          <figcaption>Karla G., San Salvador</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ UBICACIÓN con mapa ============ -->
+  <section class="ubicacion" id="ubicacion">
+    <div class="contenedor ubicacion__grid">
+      <div class="ubicacion__info">
+        <h2>Pasa por el taller</h2>
+        <p>Calle ejemplo #123, Colonia Médica, San Salvador. A media cuadra de la parada de buses.</p>
+        <dl class="horario">
+          <div><dt>Lunes a viernes</dt><dd>8:00 a 18:00</dd></div>
+          <div><dt>Sábado</dt><dd>8:00 a 14:00</dd></div>
+          <div><dt>Domingo</dt><dd>Cerrado</dd></div>
+        </dl>
+        <a class="boton boton--tinta" href="https://www.google.com/maps/search/?api=1&query=Colonia+M%C3%A9dica+San+Salvador" target="_blank" rel="noopener">Abrir en Google Maps</a>
+      </div>
+      <!-- El mapa de Google NO carga solo: Google pone cookies y se entera de cada visita.
+           Carga cuando la persona toca el botón (script.js, parte 5).
+           ✏️ Cambiar la dirección en data-src y en "Abrir en Google Maps". -->
+      <div class="mapa" id="mapa">
+        <div class="mapa__aviso">
+          <svg class="mapa__pin" viewBox="0 0 24 32" width="36" height="48" aria-hidden="true">
+            <path class="mapa__pin-gota" d="M12 1C6 1 1.5 5.5 1.5 11.4 1.5 19 12 31 12 31s10.5-12 10.5-19.6C22.5 5.5 18 1 12 1Z"/>
+            <circle class="mapa__pin-centro" cx="12" cy="11.5" r="4"/>
+          </svg>
+          <p class="mapa__lugar">Colonia Médica, San Salvador</p>
+          <button class="boton boton--cinta" type="button" id="ver-mapa"
+                  data-src="https://www.google.com/maps?q=Colonia%20M%C3%A9dica%2C%20San%20Salvador&z=15&output=embed">
+            Ver el mapa aquí
+          </button>
+          <p class="mapa__nota">El mapa es de Google. Al abrirlo, Google puede guardar cookies en tu navegador.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="pie">
+    <div class="contenedor pie__grid">
+      <div>
+        <a class="marca" href="#inicio"><span class="marca__tornillo" aria-hidden="true"></span>chunche</a>
+        <p>Reparación de celulares en San Salvador.<br>90 días de garantía en cada arreglo.</p>
+      </div>
+      <div>
+        <p><strong>WhatsApp</strong><br><a href="https://wa.me/50370000000" target="_blank" rel="noopener" data-telefono>7000-0000</a></p>
+        <p><strong>Horario</strong><br>Lunes a sábado desde las 8:00</p>
+      </div>
+    </div>
+    <div class="contenedor pie__legal">
+      <nav aria-label="Información legal">
+        <a href="garantia.html">Condiciones de la garantía</a>
+        <a href="privacidad.html">Privacidad</a>
+      </nav>
+      <p class="pie__firma">Página de muestra hecha por <strong>Yunkara</strong>.</p>
+    </div>
+  </footer>
+
+  <!-- Botón flotante de WhatsApp (aparece después del inicio) -->
+  <a class="flotante" href="https://wa.me/50370000000?text=Hola%2C%20quiero%20reparar%20mi%20celular" target="_blank" rel="noopener" aria-label="Escribir por WhatsApp">
+    <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><use href="#icono-wa"/></svg>
+  </a>
+
+  <!-- Íconos SVG reutilizables (se dibujan una vez y se usan con <use>) -->
+  <svg class="sprite" width="0" height="0" aria-hidden="true">
+    <symbol id="icono-wa" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.9 11.9 0 0 0 4.6 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .1-1.3c0-.1-.2-.2-.4-.3Z"/></symbol>
+    <symbol id="estrella" viewBox="0 0 24 24"><path fill="currentColor" d="m12 2.5 2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8L12 2.5Z"/></symbol>
+  </svg>
+
+  <!-- Librerías guardadas en el proyecto (carpeta /librerias, ver su LEEME.md):
+       GSAP (animaciones) y su plugin ScrollTrigger (animar con el scroll) -->
+  <script src="librerias/gsap.min.js"></script>
+  <script src="librerias/ScrollTrigger.min.js"></script>
+  <script src="datos-negocio.js"></script>
+  <script src="script.js"></script>
+
+  <!-- El 3D (Three.js). escena3d.js trae Three.js desde /librerias con "import" -->
+  <script type="module" src="escena3d.js"></script>
+</body>
+</html>

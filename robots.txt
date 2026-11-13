@@ -1,0 +1,3 @@
+# Le dice a Google y a otros buscadores que pueden revisar todo el sitio.
+User-agent: *
+Allow: /

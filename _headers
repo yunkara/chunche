@@ -1,0 +1,22 @@
+# Reglas que Netlify manda con cada archivo (solo funciona al publicar en Netlify).
+# Las líneas con # son comentarios.
+
+# Para todas las páginas:
+/*
+  # No dejar que otra página meta la nuestra adentro (evita engaños tipo "clickjacking")
+  X-Frame-Options: DENY
+  Content-Security-Policy: frame-ancestors 'none'
+  # El navegador no debe "adivinar" qué tipo de archivo es cada cosa
+  X-Content-Type-Options: nosniff
+  # Al salir a otro sitio, solo decir el dominio, no la página exacta
+  Referrer-Policy: strict-origin-when-cross-origin
+  # La página no usa cámara, micrófono ni ubicación: los bloqueamos
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+
+# Letras y librerías casi nunca cambian: que el navegador las guarde 1 año
+# (la segunda visita carga mucho más rápido).
+# Ojo: si algún día se cambia uno de estos archivos, hay que cambiarle el nombre.
+/fuentes/*
+  Cache-Control: public, max-age=31536000, immutable
+/librerias/*
+  Cache-Control: public, max-age=31536000, immutable

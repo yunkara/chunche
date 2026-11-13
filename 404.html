@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Página no encontrada | Chunche</title>
+  <meta name="robots" content="noindex"><!-- que Google no la muestre en búsquedas -->
+  <meta name="theme-color" content="#24686c">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+  <!-- Ojo: aquí las rutas empiezan con "/" (ruta desde la raíz del sitio).
+       Esta página aparece en CUALQUIER dirección que no exista, ej. /algo/mal/escrito,
+       y con rutas relativas buscaría los estilos en /algo/mal/estilos.css (no existen). -->
+  <link rel="icon" href="/icono.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/estilos.css">
+</head>
+<body class="legal-cabecera">
+  <main class="error404">
+    <a class="marca" href="/" aria-label="Chunche, ir al inicio">
+      <span class="marca__tornillo" aria-hidden="true"></span>chunche
+    </a>
+    <p class="error404__numero">404</p>
+    <h1>Esta página se nos desarmó</h1>
+    <p>No encontramos lo que buscabas. Puede que el enlace esté mal escrito o que la página ya no exista.</p>
+    <div class="botones">
+      <a class="boton boton--cinta" href="/">Volver al inicio</a>
+      <a class="boton boton--borde" href="https://wa.me/50370000000?text=Hola%2C%20quiero%20reparar%20mi%20celular" target="_blank" rel="noopener">Escribir por WhatsApp</a>
+    </div>
+  </main>
+  <script src="/datos-negocio.js"></script>
+</body>
+</html>
