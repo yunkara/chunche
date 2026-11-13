@@ -38,6 +38,13 @@
   <link rel="preload" href="fuentes/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="estilos.css">
 
+  <!-- PRECARGAR EL 3D: sin esto, el navegador pedía los archivos en "cascada"
+       (primero escena3d.js; al leerlo descubría Three.js y recién lo pedía).
+       modulepreload le avisa desde el principio para que los baje todos a la vez. -->
+  <link rel="modulepreload" href="escena3d.js">
+  <link rel="modulepreload" href="librerias/three.module.min.js">
+  <link rel="modulepreload" href="librerias/RoomEnvironment.js">
+
   <!-- FICHA PARA GOOGLE (datos estructurados): le dice a Google, en su idioma,
        que esto es un negocio local, con su horario y teléfono.
        No es código que se ejecute: son solo datos.
