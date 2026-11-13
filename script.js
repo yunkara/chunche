@@ -73,6 +73,11 @@ if (window.gsap && window.ScrollTrigger) {
     // ¿Estamos en un celular (pantalla angosta) al cargar la página?
     const enCelular = esCelular();
 
+    // 🔀 INTERRUPTOR: ¿paradas en cada pieza en celular?
+    //   true  = al soltar el dedo, se acomoda sola en la siguiente pieza
+    //   false = se queda exactamente donde soltaste (como cualquier página)
+    const PARADAS_EN_CELULAR = false;
+
     // --- Línea de tiempo (las animaciones en orden) ---
     // Primero la armamos completa; al final (paso 4) la atamos al scroll.
     const tl = gsap.timeline({ paused: true, defaults: { ease: "power2.inOut" } });
@@ -144,10 +149,11 @@ if (window.gsap && window.ScrollTrigger) {
       anticipatePin: 1,          // fija la sección un instante ANTES, para que no "brinque" al bajar rápido
       scrub: 0.5,                // la animación avanza o retrocede según bajes o subas
       invalidateOnRefresh: true, // recalcula si cambia el tamaño de la ventana
-      // SNAP (solo en celular): al soltar el dedo, la animación se acomoda sola en una parada.
+      // SNAP (solo en celular y si el INTERRUPTOR está en true):
+      // al soltar el dedo, la animación se acomoda sola en una parada.
       // directional: va hacia donde deslizaste (bajando = la siguiente pieza,
       // subiendo = la anterior), aunque hayas deslizado poquito.
-      snap: enCelular
+      snap: enCelular && PARADAS_EN_CELULAR
         ? {
             snapTo: paradas,
             directional: true,
