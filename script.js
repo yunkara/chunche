@@ -76,7 +76,7 @@ if (window.gsap && window.ScrollTrigger) {
     // 🔀 INTERRUPTOR: ¿paradas en cada pieza en celular?
     //   true  = al soltar el dedo, se acomoda sola en la siguiente pieza
     //   false = se queda exactamente donde soltaste (como cualquier página)
-    const PARADAS_EN_CELULAR = false;
+    const PARADAS_EN_CELULAR = true;
 
     // --- Línea de tiempo (las animaciones en orden) ---
     // Primero la armamos completa; al final (paso 4) la atamos al scroll.
