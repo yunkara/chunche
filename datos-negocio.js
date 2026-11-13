@@ -13,9 +13,8 @@
       (con permiso del cliente). Las de ahora son inventadas.
    5. index.html → la "ficha para Google" (<script type="application/ld+json">):
       mismo teléfono, dirección y horario que la página.
-   6. index.html → vista previa: en og:image la dirección completa del sitio ya
-      publicado (ej. https://chunche.netlify.app/vista-previa.jpg) y agregar og:url
-      (el comentario en index.html dice cómo).
+   6. index.html → vista previa: og:url, og:image y canonical tienen la dirección
+      del sitio (hoy https://chunche-yunkara.netlify.app). Cambiarla si cambia el dominio.
    7. script.js → REPARACIONES: precios de mano de obra y tiempos.
    8. garantia.html → que el dueño lea y acepte las condiciones (son SUS reglas).
    9. privacidad.html → nombre del responsable y fecha. Si se agregan estadísticas
