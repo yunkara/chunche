@@ -31,18 +31,32 @@ if (window.gsap && window.ScrollTrigger) {
   // normalizeScroll: GSAP maneja el scroll del dedo, la barra se queda quieta
   // y la animación va sincronizada con el dedo.
   // (isTouch === 1 = solo táctil; las compus con pantalla táctil no entran)
-  if (ScrollTrigger.isTouch === 1) {
-    ScrollTrigger.normalizeScroll({
-      // momentum = el "impulso" que sigue moviendo la página después de soltar el dedo.
-      // DENTRO de la animación del celular lo quitamos (0): si no, una deslizada
-      // corta se saltaba piezas (probado: de "Vidrio" pasaba directo a "Placa").
-      // En el resto de la página, impulso normal.
-      momentum: (self) => {
-        const st = window.chuncheTL?.scrollTrigger;
-        const dentro = st && st.isActive && st.progress < 0.999;
-        return dentro ? 0 : Math.min(3, self.velocityY / 1000);
-      },
-    });
+  const pantallaTactil = ScrollTrigger.isTouch === 1;
+  const configScrollTactil = {
+    // momentum = el "impulso" que sigue moviendo la página después de soltar el dedo.
+    // DENTRO de la animación del celular lo quitamos (0): si no, una deslizada
+    // corta se saltaba piezas (probado: de "Vidrio" pasaba directo a "Placa").
+    // En el resto de la página, el impulso normal de GSAP (2.8).
+    // OJO: tiene que ser un número POSITIVO (una versión anterior usaba la
+    // velocidad, que al bajar es negativa, y la página se frenaba en seco).
+    momentum: () => {
+      const st = window.chuncheTL?.scrollTrigger;
+      const y = window.scrollY; // posición real del scroll en este instante
+      const dentro = st && y >= st.start && y < st.end - 2;
+      return dentro ? 0 : 2.8;
+    },
+  };
+  if (pantallaTactil) ScrollTrigger.normalizeScroll(configScrollTactil);
+
+  // Reiniciar el control del scroll táctil.
+  // Por dentro, GSAP usa la MISMA animación de scroll para las "paradas" y para
+  // el impulso. Cuando una parada termina, esa animación queda cancelada y el
+  // impulso ya no funcionaba: al salir de la animación la página se quedaba
+  // clavada (probado). Apagar y prender normalizeScroll le da una nueva.
+  function reiniciarScrollTactil() {
+    if (!pantallaTactil) return;
+    ScrollTrigger.normalizeScroll(false);
+    ScrollTrigger.normalizeScroll(configScrollTactil);
   }
   // No recalcular todo cada vez que la barra del celular cambia el alto
   ScrollTrigger.config({ ignoreMobileResize: true });
@@ -171,6 +185,7 @@ if (window.gsap && window.ScrollTrigger) {
             duration: { min: 0.25, max: 0.7 }, // cuánto tarda en acomodarse
             delay: 0.05,                       // espera un poquito después de soltar
             ease: "power2.inOut",
+            onComplete: reiniciarScrollTactil, // ver arriba: si no, se pierde el impulso
           }
         : false,
     });
