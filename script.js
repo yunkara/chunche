@@ -25,6 +25,18 @@ document.querySelectorAll(".fecha").forEach((f) => (f.textContent = fechaDeHoy()
 if (window.gsap && window.ScrollTrigger) {
   gsap.registerPlugin(ScrollTrigger);
 
+  // SOLO EN PANTALLAS TÁCTILES (celular / tablet):
+  // En el celular, la barra de la dirección aparece y desaparece al deslizar.
+  // Eso cambia el alto de la pantalla y la sección "pegada" daba brincos.
+  // normalizeScroll: GSAP maneja el scroll del dedo, la barra se queda quieta
+  // y la animación va sincronizada con el dedo.
+  // (isTouch === 1 = solo táctil; las compus con pantalla táctil no entran)
+  if (ScrollTrigger.isTouch === 1) {
+    ScrollTrigger.normalizeScroll(true);
+  }
+  // No recalcular todo cada vez que la barra del celular cambia el alto
+  ScrollTrigger.config({ ignoreMobileResize: true });
+
   // matchMedia: el código de adentro SOLO corre si la persona
   // no pidió "reducir movimiento" en su teléfono o compu.
   const mm = gsap.matchMedia();
@@ -58,21 +70,12 @@ if (window.gsap && window.ScrollTrigger) {
     gsap.from(".telefono-caja", { y: -90, autoAlpha: 0, duration: 1.3, ease: "expo.out", delay: 0.1 });
     gsap.from(".hero__texto > *", { y: 28, autoAlpha: 0, duration: 0.9, stagger: 0.08, ease: "expo.out" });
 
-    // --- Línea de tiempo atada al scroll ---
-    // pin: la sección se queda quieta mientras bajas.
-    // scrub: la animación avanza o retrocede según bajes o subas.
-    const tl = gsap.timeline({
-      defaults: { ease: "power2.inOut" },
-      scrollTrigger: {
-        trigger: ".hero",
-        start: "top top",
-        end: () => "+=" + window.innerHeight * 3, // 3 pantallas de scroll
-        pin: true,
-        anticipatePin: 1,          // fija la sección un instante ANTES, para que no "brinque" al bajar rápido
-        scrub: 0.5,
-        invalidateOnRefresh: true, // recalcula si cambia el tamaño de la ventana
-      },
-    });
+    // ¿Estamos en un celular (pantalla angosta) al cargar la página?
+    const enCelular = esCelular();
+
+    // --- Línea de tiempo (las animaciones en orden) ---
+    // Primero la armamos completa; al final (paso 4) la atamos al scroll.
+    const tl = gsap.timeline({ paused: true, defaults: { ease: "power2.inOut" } });
 
     // 1) Se esconde el texto, el celular se desarma y las herramientas se apartan
     tl.to(".hero__texto", { autoAlpha: 0, y: -30, duration: 0.4 })
@@ -117,6 +120,43 @@ if (window.gsap && window.ScrollTrigger) {
       .to(".progreso", { autoAlpha: 0, duration: 0.2 }, "armar")
       .fromTo(fichaFinal, { autoAlpha: 0, y: 24 }, { autoAlpha: 1, y: 0, duration: 0.4, ease: "expo.out", immediateRender: false }, "armar+=0.45")
       .to({}, { duration: 0.3 });
+
+    // 4) Atar la línea de tiempo al scroll
+    // "Paradas": los momentos en que cada ficha ya se lee completa.
+    // Cada pieza aparece en su etiqueta ("pieza0"...) y queda quieta hasta +0.85;
+    // +0.6 es justo a la mitad de ese rato. Se escriben como avance de 0 a 1.
+    // (Por eso se calculan aquí: la línea de tiempo ya está completa.)
+    const total = tl.duration();
+    const paradas = [
+      0,                                                              // el título del inicio
+      ...[0, 1, 2, 3, 4].map((n) => (tl.labels["pieza" + n] + 0.6) / total), // las 5 piezas
+      1,                                                              // "Y lo volvemos a armar"
+    ];
+
+    ScrollTrigger.create({
+      animation: tl,
+      trigger: ".hero",
+      start: "top top",
+      // Cuánto hay que deslizar: en compu 3 pantallas; en celular 1.8,
+      // porque con el dedo se sentía "trabado" (empujabas y la página no avanzaba)
+      end: () => "+=" + window.innerHeight * (enCelular ? 1.8 : 3),
+      pin: true,                 // la sección se queda quieta mientras bajas
+      anticipatePin: 1,          // fija la sección un instante ANTES, para que no "brinque" al bajar rápido
+      scrub: 0.5,                // la animación avanza o retrocede según bajes o subas
+      invalidateOnRefresh: true, // recalcula si cambia el tamaño de la ventana
+      // SNAP (solo en celular): al soltar el dedo, la animación se acomoda sola en una parada.
+      // directional: va hacia donde deslizaste (bajando = la siguiente pieza,
+      // subiendo = la anterior), aunque hayas deslizado poquito.
+      snap: enCelular
+        ? {
+            snapTo: paradas,
+            directional: true,
+            duration: { min: 0.25, max: 0.7 }, // cuánto tarda en acomodarse
+            delay: 0.05,                       // espera un poquito después de soltar
+            ease: "power2.inOut",
+          }
+        : false,
+    });
 
     // Compartimos la línea de tiempo para que escena3d.js agregue
     // sus propias animaciones en los mismos momentos (etiquetas "pieza0"... "armar").

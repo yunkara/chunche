@@ -39,7 +39,9 @@ async function iniciar() {
   // En celular gastamos menos: los celulares baratos se calientan con el 3D
   const esCelular = window.innerWidth < 760;
 
-  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true }); // alpha: fondo transparente (se ve el tapete de CSS)
+  // antialias = suavizar los bordes. En celular las pantallas tienen tantos puntos
+  // que casi no se nota, y quitarlo le ahorra mucho trabajo a la tarjeta de video.
+  const renderer = new THREE.WebGLRenderer({ antialias: !esCelular, alpha: true }); // alpha: fondo transparente (se ve el tapete de CSS)
   // Pixel ratio = cuántos puntos reales dibuja por cada punto de la página.
   // En celular 1.5 ya se ve nítido y dibuja casi la mitad de puntos que 2.
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, esCelular ? 1.5 : 2));
